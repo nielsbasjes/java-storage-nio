@@ -39,6 +39,7 @@ import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
+import java.nio.file.AccessMode;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.CopyOption;
 import java.nio.file.FileAlreadyExistsException;
@@ -49,6 +50,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.spi.FileSystemProvider;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -748,6 +750,17 @@ public class CloudStorageFileSystemProviderTest {
     Files.delete(source);
     Files.delete(target1);
     Files.delete(target2);
+  }
+
+  @Test
+  public void testCheckAccessRoot() throws Exception {
+    FileSystem fileSystem = CloudStorageFileSystem.forBucket("doodle");
+    Path path = fileSystem.getPath("/");
+    FileSystemProvider provider = fileSystem.provider();
+
+    // Against the real cloud storage this used to throw a StorageException.
+    // Against the mocked one for these tests it always works.
+    provider.checkAccess(path, AccessMode.READ, AccessMode.WRITE);
   }
 
   @Test
