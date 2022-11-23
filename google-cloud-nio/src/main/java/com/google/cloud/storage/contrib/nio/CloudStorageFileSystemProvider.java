@@ -917,10 +917,28 @@ public final class CloudStorageFileSystemProvider extends FileSystemProvider {
     // Some systems expect Posix support for everything so these attributes are faked.
     if (view.equals("posix")) {
       if (allAttributes || attributeNames.contains("owner")) {
-        results.put("owner", (UserPrincipal) () -> "FakeOwner");
+        results.put("owner", new UserPrincipal() {
+          @Override
+          public String getName() {
+            return "fakeowner";
+          }
+          @Override
+          public String toString() {
+            return "fakeowner";
+          }
+        });
       }
       if (allAttributes || attributeNames.contains("group")) {
-        results.put("group", (GroupPrincipal) () -> "FakeGroup");
+        results.put("group", new GroupPrincipal() {
+          @Override
+          public String getName() {
+            return "fakegroup";
+          }
+          @Override
+          public String toString() {
+            return "fakegroup";
+          }
+        });
       }
       if (allAttributes || attributeNames.contains("permissions")) {
         results.put("permissions", EnumSet.allOf(PosixFilePermission.class));
